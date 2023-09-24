@@ -1,13 +1,15 @@
 from flask import Flask, url_for, render_template, request, redirect, flash, session
-from init_db import insert_query_user, create_table, find_user_login, log_user_session
+from init_db import insert_query_user, create_table, find_user_login, log_user_session, update_user_new_login
 from flask_session import Session
 import os
 
 app = Flask(__name__)
 
-SESSION_TYPE = "filesystem"
-PERMANENT_SESSION_LIFETIME = 1800
-
+PERMANENT_SESSION_LIFETIME = 10
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_USE_SIGNER'] = True 
+app.config['SESSION_REFRESH_EACH_REQUEST'] = True 
 app.config.update(SECRET_KEY=os.urandom(24))
 
 app.config.from_object(__name__)
@@ -35,9 +37,10 @@ def login():
         password = request.form['password']
         password_db = find_user_login(username)
         if password_db.strip() != password.strip():
-            error = 'Invalid User Credentials!'
+            error = 'Invalid User Credentials! Please try Again'
             redirect(url_for("register"))
         else:
+            update_user_new_login(username)
             return redirect(url_for("profile", username=username))
         
     return render_template('login.html', msg=error)
@@ -62,8 +65,8 @@ def register():
         if not password_db:
             return redirect(url_for("profile", username=username))
         else:
-            error = 'user already exists! please try to login'
-            return redirect(url_for("login", msg=error))
+            error = 'user already exists! please try to login!'
+            return render_template('login.html', msg=error)
     elif request.method == 'post':
         error = 'please fill out the form!'
     return render_template('register.html', msg=error)
@@ -78,7 +81,6 @@ def profile(username):
 def logout():
     username = session['username']
     session_id = str(session.sid)
-    print(session)
     session.pop('username', None)
     session.pop('sid', None)
     log_user_session(username, session_id)

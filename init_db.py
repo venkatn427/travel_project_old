@@ -7,7 +7,7 @@ database_nm = "travel_db.db" #check this file in sql lite studio to query data
 def find_user_login(username):
     connection = sqlite3.connect(database_nm)
     cur = connection.cursor()
-    sql_query = 'SELECT distinct password FROM users where username = "' + username + '";'
+    sql_query = f"SELECT distinct password FROM users where username = '{username}';"
     t = cur.execute(sql_query).fetchall()
     return str("".join(t[0]))
     
@@ -30,10 +30,17 @@ def insert_query_user(username, email, password, fname, lname):
     connection.commit()
     return "Record Inserted Successfully"
 
+def update_user_new_login(username):
+    connection = sqlite3.connect(database_nm)
+    cur = connection.cursor()
+    sql_statement = f"INSERT INTO user_sessions(username,logout_time) VALUES('{username}','')";  
+    cur.execute(sql_statement)
+    connection.commit()
+
 def log_user_session(username, session_id):
     connection = sqlite3.connect(database_nm)
     cur = connection.cursor()
-    sql_statement = f"UPDATE user_sessions SET logout_time = CURRENT_TIMESTAMP, session_id = '{session_id}' WHERE username='{username}'"   
+    sql_statement = f"UPDATE user_sessions SET logout_time = CURRENT_TIMESTAMP, session_id = '{session_id}' WHERE username='{username}' and session_id is NULL"   
     cur.execute(sql_statement)
     connection.commit()
     connection.close()
