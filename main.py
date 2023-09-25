@@ -23,7 +23,7 @@ def home():
 
 @app.route('/travelblog/home')
 def site_home():
-    return render_template('index.html', msg='', login=url_for("login"), username="ruchi")
+    return render_template('index.html', msg='', login=url_for("login"))
 
 @app.route('/login')
 def site_login():
