@@ -2,7 +2,6 @@ from flask import Flask, url_for, render_template, request, redirect, flash, ses
 from init_db import insert_query_user, create_table, find_user_login, log_user_session, update_user_new_login
 from flask_session import Session
 import os
-import requests
 
 app = Flask(__name__)
 
@@ -23,7 +22,7 @@ def home():
 
 @app.route('/travelblog/home')
 def site_home():
-    return render_template('index.html', msg='', login=url_for("login"), username="ruchi")
+    return render_template('index.html', msg='', login=url_for("login"))
 
 @app.route('/login')
 def site_login():
