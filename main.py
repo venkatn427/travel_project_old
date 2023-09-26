@@ -80,6 +80,7 @@ def profile(username):
 
 @app.route('/travelblog/logout')
 def logout():
+    print(session)
     username = session['username']
     session_id = str(session.sid)
     session.pop('username', None)
