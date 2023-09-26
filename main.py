@@ -2,7 +2,6 @@ from flask import Flask, url_for, render_template, request, redirect, flash, ses
 from init_db import insert_query_user, create_table, find_user_login, log_user_session, update_user_new_login
 from flask_session import Session
 import os
-import requests
 
 app = Flask(__name__)
 
@@ -34,7 +33,7 @@ def login():
     error = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
-        session['username'] = request.form['username']
+        session['username'] = username
         password = request.form['password']
         password_db = find_user_login(username)
         if password_db.strip() != password.strip():
@@ -52,7 +51,7 @@ def register():
     error = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
         username = request.form['username']
-        session['username'] = request.form['username']
+        session['username'] = username
         password = request.form['password']
         fname = request.form["fname"]
         lname = request.form["lname"]
