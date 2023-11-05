@@ -2,7 +2,7 @@ import sqlite3
 from datetime import datetime
 
 global database_nm 
-database_nm = "travel_db.db" #check this file in sql lite studio to query data
+database_nm = "travel_data_latest.db" #check this file in sql lite studio to query data
 
 def find_user_login(username):
     connection = sqlite3.connect(database_nm)
@@ -11,10 +11,15 @@ def find_user_login(username):
     t = cur.execute(sql_query).fetchall()
     return str("".join(t[0]))
     
-def select_all_users():
+def select_all_from_table(table_name, where_clause):
     connection = sqlite3.connect(database_nm)
     cur = connection.cursor()
-    all_users = cur.execute("select * from users").fetchall()
+    if where_clause is not None:
+        query = f"select * from {table_name} where " + where_clause
+    else:
+        query = f"select * from {table_name}"
+    print(query)
+    all_users = cur.execute(query).fetchall()
     return [user for user in all_users]
 
 def create_table():
@@ -29,6 +34,14 @@ def insert_query_user(username, email, password, fname, lname):
                     (username, email, password, fname, lname))
     connection.commit()
     return "Record Inserted Successfully"
+
+def insert_or_update_location(state, name, description, locationcategory, image_url):
+    connection = sqlite3.connect(database_nm)
+    cur = connection.cursor()
+    cur.execute("INSERT INTO location (state, name, description,locationcategory, image_url) VALUES (?, ?, ?, ?, ?)",
+                    (state, name, description, locationcategory, image_url))
+    connection.commit()
+    return "Record Inserted Successfully" 
 
 def update_user_new_login(username):
     connection = sqlite3.connect(database_nm)

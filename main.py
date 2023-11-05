@@ -1,5 +1,5 @@
 from flask import Flask, url_for, render_template, request, redirect, flash, session
-from init_db import insert_query_user, create_table, find_user_login, log_user_session, update_user_new_login
+from init_db import insert_query_user, create_table, find_user_login, log_user_session, update_user_new_login, select_all_from_table
 from flask_session import Session
 import os
 
@@ -23,6 +23,24 @@ def home():
 @app.route('/travelblog/home')
 def site_home():
     return render_template('index.html', msg='', login=url_for("login"))
+
+
+@app.route('/travelblog/locationtest')
+def locationtest():
+    where_clause = "state = 'Karnataka' and locationcategory = 'beaches'"
+    data = select_all_from_table('location', where_clause)
+    
+    card_data = []
+    for i, each in enumerate(data):
+        location = {}
+        location['title'] = each[1]
+        location['name'] = each[2]
+        location['description'] = each[3]
+        location['image'] = each[5]
+        location['class'] = each[1] + str(i) 
+        card_data.append(location)
+        
+    return render_template('location_select.html', card_data=card_data)
 
 @app.route('/login')
 def site_login():

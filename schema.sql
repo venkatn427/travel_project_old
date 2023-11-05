@@ -20,8 +20,21 @@ CREATE TABLE user_sessions (
     logout_time TIMESTAMP
 );
 
+DROP TABLE IF EXISTS location;
+
+CREATE TABLE location (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    state TEXT NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    locationcategory TEXT NOT NULL,
+    image_url TEXT NOT NULL,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TRIGGER aft_insert AFTER INSERT ON users
 BEGIN
 INSERT INTO user_sessions(username,logout_time)
          VALUES(NEW.username,"");
+
 END;

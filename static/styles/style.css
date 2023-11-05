@@ -241,13 +241,16 @@ ul.menu {
 }
 
 .cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  grid-gap: 30px;
-  align-items: center;
-  justify-items: center;
-  text-align: center;
+  display: flex;
+  background-color: #fff;
+  margin-bottom: 20px; /* Add margin to create a gap between card blocks */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  padding: 20px; /* Increase padding for larger card size */
+  width: 100%; /* Make cards full-width */
+  max-width: 100%; /* Make cards full-width */
 }
 
 .card {
