@@ -1,5 +1,5 @@
 from flask import Flask, url_for, render_template, request, redirect, flash, session
-from init_db import insert_query_user, create_table, find_user_login, log_user_session, update_user_new_login, select_all_from_table
+from init_db import insert_query_user, find_user_login, log_user_session, update_user_new_login, select_all_from_table
 from flask_session import Session
 import os
 
@@ -84,7 +84,6 @@ def register():
             password_db = find_user_login(username)
         except Exception:
             password_db = None
-            # create_table() #uncomment only if you are running this first time 
             insert_query_user(username=username, email=email, password=password, fname=fname, lname=lname)
         if not password_db:
             return redirect(url_for("profile", username=username))
