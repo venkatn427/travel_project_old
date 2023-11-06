@@ -25,9 +25,12 @@ def site_home():
     return render_template('index.html', msg='', login=url_for("login"))
 
 
-@app.route('/travelblog/locationtest')
-def locationtest():
-    where_clause = "state = 'Karnataka' and locationcategory = 'beaches'"
+@app.route('/travelblog/locationdetails', methods=['GET', 'POST'])
+def locationdetails():
+    username = "ruchi"
+    selected_state = request.form.get('selected_state')
+    locationcat = 'beaches'
+    where_clause = "state = '" + selected_state + "' and locationcategory ='" + locationcat + "'"
     data = select_all_from_table('location', where_clause)
     
     card_data = []
@@ -40,7 +43,10 @@ def locationtest():
         location['class'] = each[1] + str(i) 
         card_data.append(location)
         
-    return render_template('location_select.html', card_data=card_data)
+    return render_template('location_select.html', username1= username, 
+                           state = selected_state, 
+                           locationcat = locationcat,
+                           card_data=card_data)
 
 @app.route('/login')
 def site_login():
@@ -93,7 +99,7 @@ def register():
 @app.route('/travelblog/profile/<username>')
 def profile(username):
     return render_template('profile.html', username1=username)
-
+    
 
 @app.route('/travelblog/logout')
 def logout():
