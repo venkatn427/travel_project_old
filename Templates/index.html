@@ -32,8 +32,8 @@
                 <div class="banner-heading">
                     <h1>Find your Next Tourist Spot!</h1>
                 </div>
-                <form class="form">
-                    <input type="text" list="mylist" placeholder="Where would you like to go? Enter City Name">
+                <form class="form" method="POST" action="{{ url_for('locationdetails') }}">
+                    <input list="mylist" name="selected_state" id="state" placeholder="Where would you like to go? Select City Name">
                     <datalist id="mylist">
                         <option>Jaipur</option>
                         <option>Mumbai</option>
@@ -43,6 +43,7 @@
                         <option>Hyderabad</option>
                         <option>New Delhi</option>
                     </datalist>
+                    
                 </form>
             </div>
         </section>
