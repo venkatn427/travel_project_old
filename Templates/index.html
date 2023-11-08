@@ -35,13 +35,9 @@
                 <form class="form" method="POST" action="{{ url_for('locationdetails') }}">
                     <input list="mylist" name="selected_state" id="state" placeholder="Where would you like to go? Select City Name">
                     <datalist id="mylist">
-                        <option>Jaipur</option>
-                        <option>Mumbai</option>
-                        <option>Bengaluru</option>
-                        <option>Chennai</option>
-                        <option>Trivandrum</option>
-                        <option>Hyderabad</option>
-                        <option>New Delhi</option>
+                        {% for location in locations %}
+                        <option>{{ location.state }} </option>
+                        {% endfor %}
                     </datalist>
                     
                 </form>

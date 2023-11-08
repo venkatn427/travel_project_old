@@ -4,6 +4,14 @@ from datetime import datetime
 global database_nm 
 database_nm = "travel_data_latest.db" #check this file in sql lite studio to query data
 
+def get_all_states():
+    connection = sqlite3.connect(database_nm)
+    cur = connection.cursor()
+    query = f"select distinct state from location;"
+    all_locations = cur.execute(query).fetchall()
+    print(all_locations)
+    return [location[0] for location in all_locations]   
+    
 def find_user_login(username):
     connection = sqlite3.connect(database_nm)
     cur = connection.cursor()
