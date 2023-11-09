@@ -4,8 +4,8 @@ from init_db import insert_or_update_location, create_table, select_all_from_tab
 import os
 
 # Specify the folder directory containing HTML files
-folder_path = "allhtmlfiles"
-
+folder_path = "all_htmlfiles"
+create_table()
 # List all files in the directory
 files_in_folder = os.listdir(folder_path)
 
@@ -50,3 +50,5 @@ def html_files_load(html_files):
             count +=1 
             print(f"{count} records inserted into database")
             # state_data.append(section_data)
+
+html_files_load(html_files)

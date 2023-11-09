@@ -2,7 +2,7 @@ import sqlite3
 from datetime import datetime
 
 global database_nm 
-database_nm = "travel_data_latest.db" #check this file in sql lite studio to query data
+database_nm = "travel_data_new.db" #check this file in sql lite studio to query data
 
 def get_all_states():
     connection = sqlite3.connect(database_nm)

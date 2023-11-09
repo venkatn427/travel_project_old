@@ -120,12 +120,12 @@ def profile(username):
 
 @app.route('/travelblog/logout')
 def logout():
-    print(session)
-    username = session['username']
-    session_id = str(session.sid)
-    session.pop('username', None)
-    session.pop('sid', None)
-    log_user_session(username, session_id)
+    # print(session)
+    # username = session['username']
+    # session_id = str(session.sid)
+    # session.pop('username', None)
+    # session.pop('sid', None)
+    # log_user_session(username, session_id)
     locations = get_all_states()
     return render_template('login.html', msg="", locations=locations)
 
