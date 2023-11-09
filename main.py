@@ -126,7 +126,8 @@ def logout():
     session.pop('username', None)
     session.pop('sid', None)
     log_user_session(username, session_id)
-    return render_template('login.html', msg="")
+    locations = get_all_states()
+    return render_template('login.html', msg="", locations=locations)
 
 
 if __name__ == "__main__":
