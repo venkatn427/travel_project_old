@@ -105,4 +105,4 @@ def load_world_data_csv(csv_file_path):
             insert_load_world_data(city,city_ascii,latitude,longitude,country,country_iso2,country_iso3,admin_name,capital,population)
 
 load_world_data_csv(csv_file_path)
-create_indiancities
+create_indiancities()
