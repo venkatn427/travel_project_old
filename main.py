@@ -1,5 +1,5 @@
 from flask import Flask, url_for, render_template, request, redirect, flash, session
-from init_db import insert_query_user, find_user_login, log_user_session, update_user_new_login, select_all_from_table, get_all_states
+from utils.database_scripts import insert_query_user, find_user_login, log_user_session, update_user_new_login, select_all_from_table, get_all_states
 from flask_session import Session
 import os
 
@@ -23,20 +23,12 @@ def home():
 @app.route('/travelblog/home')
 def site_home():
     locations = get_all_states()
-    location_all = []
-    for location in locations:
-        l = {}
-        l['state'] = location
-        location_all.append(l)
-    print(location_all) 
-    return render_template('index.html', msg='', login=url_for("login"), locations=location_all)
+    return render_template('index.html', msg='', login=url_for("login"), locations=locations)
 
 def get_locationdata(selected_state, locationcat):
     where_clause = "state = '" + selected_state + "' and locationcategory ='" + locationcat + "'"
     data = select_all_from_table('location', where_clause)
-    
     card_data = []
-    locations = []
     for i, each in enumerate(data):
         location = {}
         location['title'] = each[1]
@@ -44,22 +36,27 @@ def get_locationdata(selected_state, locationcat):
         location['description'] = each[3]
         location['image'] = each[5]
         location['class'] = each[1] + str(i)
-        locations.append(each[1]) 
         card_data.append(location)
-    
-    return card_data,locations  
+    return card_data  
     
 
-
-@app.route('/travelblog/locationdetails', methods=['GET', 'POST'])
+@app.route('/travelblog/profile/locationdetails', methods=['GET', 'POST'])
 def locationdetails():
-    username = "ruchi"
-    selected_state = request.form.get('selected_state')
-    session['state'] = selected_state
-    locationcat = 'beaches' 
+    if 'username' in session:
+        username = session["username"]
+    else:
+        username = None
+    selected_state = request.form.get('textfrombox')
+    locations = get_all_states() 
+    if selected_state in locations:
+        print(locations)
+        session['state'] = selected_state
+    else:
+        selected_state = "Karnataka"
+        locationcat = 'beaches' 
     session['location'] = locationcat
     get_details = get_locationdata(selected_state, locationcat)
-    card_data = get_details[0]
+    card_data = get_details
     return render_template('location_select.html', username1= username, 
                            state = selected_state, 
                            locationcat = locationcat,
@@ -115,19 +112,20 @@ def register():
 @app.route('/travelblog/profile/<username>')
 def profile(username):
     locations = get_all_states()
+    print(locations)
     return render_template('profile.html', username1=username, locations=locations)
     
 
 @app.route('/travelblog/logout')
 def logout():
-    # print(session)
-    # username = session['username']
-    # session_id = str(session.sid)
-    # session.pop('username', None)
-    # session.pop('sid', None)
-    # log_user_session(username, session_id)
+    if 'username' in session: 
+        username = session['username']
+        session_id = str(session.sid)
+        session.pop('username', None)
+        session.pop('sid', None)
+        log_user_session(username, session_id)
     locations = get_all_states()
-    return render_template('login.html', msg="", locations=locations)
+    return render_template('index.html', msg='', login=url_for("login"), locations=locations)
 
 
 if __name__ == "__main__":
