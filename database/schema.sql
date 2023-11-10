@@ -32,6 +32,22 @@ CREATE TABLE location (
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+DROP TABLE IF EXISTS worldcities; 
+
+CREATE TABLE worldcities (
+    city TEXT NOT NULL,
+    city_ascii TEXT NOT NULL,
+    latitude REAL,
+    longitude REAL,
+    country TEXT NOT NULL,
+    country_iso2 TEXT NOT NULL,
+    country_iso3 TEXT NOT NULL,
+    admin_name TEXT,
+    capital TEXT,
+    population INTEGER,
+    id INTEGER PRIMARY KEY AUTOINCREMENT
+);
+
 CREATE TRIGGER aft_insert AFTER INSERT ON users
 BEGIN
 INSERT INTO user_sessions(username,logout_time)

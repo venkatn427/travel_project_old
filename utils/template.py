@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
-from database_scripts import insert_or_update_location, create_table 
-
+from database_scripts import insert_or_update_location, create_table, insert_load_world_data,create_indiancities
 import os
+import csv
 
 # Specify the folder directory containing HTML files
 folder_path = "all_htmlfiles"
@@ -42,31 +42,28 @@ def html_files_load(html_files):
             section_data['location_title'] = section.find('h3').text
             section_data['location_description'] = section.find('p').text
             section_data['location_img'] = section.find("img")['src']
-            # state = title
-            # location_title = section.find('h3').text
-            # location_description = section.find('p').text
-            # location_img = section.find("img")['src']
-            # response = insert_or_update_location(state, location_title, location_description,locationcategory, location_img)
+            state = title
+            location_title = section.find('h3').text
+            location_description = section.find('p').text
+            location_img = section.find("img")['src']
+            insert_or_update_location(state, location_title, location_description,locationcategory, location_img)
             count +=1 
-            # print(f"{count} records inserted into database")
             state_data.append(section_data)
+        print(f"{count} records inserted into database")
     return state_data
 
 # html_files_load(html_files)
 
 import requests
 
-def download_image_fromurl(url, save_path):
-    image_metadata[image_url] = {}
+def download_image_fromurl(url, save_path, image_metadata):
+    image_metadata[url] = {}
     try:
-        # Send an HTTP GET request to the URL
         response = requests.get(url)
-        image_metadata[image_url]['download_status'] = response.status_code
-        # Check if the request was successful (status code 200)
+        image_metadata[url]['download_status'] = response.status_code
         if response.status_code == 200:
-            # Open a file with binary write mode and write the content
             out_file_path = os.path.join("images", save_path)
-            image_metadata[image_url]['localpath'] = out_file_path
+            image_metadata[url]['localpath'] = out_file_path
             with open(out_file_path, 'wb') as file:
                 file.write(response.content)
         else:
@@ -74,17 +71,38 @@ def download_image_fromurl(url, save_path):
     except Exception as e:
         print(f"Error: {e}")
 
-details = html_files_load(html_files)
-
-image_metadata = {}
-for file in details:
-    image_url = file['location_img']
-    new_image_path = image_url.replace("https://", "").replace("/", "_")
-    download_image_fromurl(image_url, new_image_path)
-    
 import json   
-# Write JSON data to the file
-with open("image_metadata.json", 'w') as json_file:
-    json.dump(image_metadata, json_file)
 
-print(f"JSON data saved ")
+def downloages_all():
+    image_metadata = {}
+    details = html_files_load(html_files)
+    for file in details:
+        image_url = file['location_img']
+        new_image_path = image_url.replace("https://", "").replace("/", "_")
+        download_image_fromurl(image_url, new_image_path, image_metadata) 
+    with open("image_metadata.json", 'w') as json_file:
+        json.dump(image_metadata, json_file)
+
+csv_file_path = "/Users/venkat/Desktop/TravelProjecr/travel_project/database/worldcities.csv"
+
+def load_world_data_csv(csv_file_path):
+    with open(csv_file_path, 'r') as csv_file:
+        csv_reader = csv.reader(csv_file)
+        csv_file.seek(0)
+        next(csv_reader)  
+        for val in csv_reader:
+            record = val
+            city = record[0]
+            city_ascii = record[1]
+            latitude = record[2]
+            longitude = record[3]
+            country = record[4]
+            country_iso2 = record[5]
+            country_iso3 = record[6]
+            admin_name = record[7]
+            capital = record[8]
+            population = record[9]
+            insert_load_world_data(city,city_ascii,latitude,longitude,country,country_iso2,country_iso3,admin_name,capital,population)
+
+load_world_data_csv(csv_file_path)
+create_indiancities

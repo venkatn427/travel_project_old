@@ -1,9 +1,24 @@
 import sqlite3
 from datetime import datetime
 import os
+import csv
 
 global database_nm 
 database_nm = os.path.join("database", "travel_data_new.db") #check this file in sql lite studio to query data
+    
+        
+def insert_load_world_data(city,city_ascii,lat,lng,country,iso2,iso3,admin_name,capital,population):
+    connection = sqlite3.connect(database_nm)
+    cur = connection.cursor()
+    cur.execute("INSERT INTO worldcities (city, city_ascii, latitude, longitude, country, country_iso2, country_iso3, admin_name, capital, population) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (city,city_ascii,lat,lng,country,iso2,iso3,admin_name,capital,population))
+    connection.commit()
+    return "Record Inserted Successfully"
+
+def create_indiancities():
+    connection = sqlite3.connect(database_nm)
+    cur = connection.cursor()
+    cur.execute("create table indiancities as select * from worldcities where country = 'India';")
 
 def get_all_states():
     connection = sqlite3.connect(database_nm)
