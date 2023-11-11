@@ -1,5 +1,5 @@
 from flask import Flask, url_for, render_template, request, redirect, flash, session
-from utils.database_scripts import insert_query_user, find_user_login, log_user_session, update_user_new_login, select_all_from_table, get_all_states
+from utils.database_scripts import insert_query_user, find_user_login, get_all_cities, log_user_session, update_user_new_login, select_all_from_table, get_all_states
 from flask_session import Session
 import os
 
@@ -22,7 +22,7 @@ def home():
 
 @app.route('/travelblog/home')
 def site_home():
-    locations = get_all_states()
+    locations = get_all_cities()
     return render_template('index.html', msg='', login=url_for("login"), locations=locations)
 
 def get_locationdata(selected_state, locationcat):
@@ -39,7 +39,43 @@ def get_locationdata(selected_state, locationcat):
         card_data.append(location)
     return card_data  
     
+def get_locationdata_new(selected_state):
+    where_clause = "city = '" + selected_state + "'"
+    data = select_all_from_table('city_places', where_clause)
+    card_data = []
+    for i, each in enumerate(data):
+        location_details = {}
+        location_details['title'] = selected_state
+        location_details['name'] = each[2]
+        location_details['description'] = each[5]
+        location_details['image'] = "https://im.hunt.in/cg/Vijayawada/City-Guide/xMary-Matha-Shrine.jpg"
+        location_details['class'] = each[1] + str(i)
+        card_data.append(location_details)
+    return card_data  
 
+@app.route('/travelblog/locationnewtest', methods=['GET', 'POST'])
+def locationdetails_new():
+    if 'username' in session:
+        username = session["username"]
+    else:
+        username = None
+    selected_city = request.form.get('selected_state')
+    locations = get_all_cities()
+    cities = [location['city'] for location in locations] 
+    print(locations)
+    if selected_city in cities:
+        print(selected_city)
+        session['state'] = selected_city
+    else:
+        selected_city = "Agartala"
+    #     locationcat = 'beaches' 
+    # session['location'] = locationcat
+    get_details = get_locationdata_new(selected_city)
+    card_data = get_details
+    return render_template('location_select.html', username1= username, 
+                           city = selected_city,
+                           card_data=card_data)
+    
 @app.route('/travelblog/profile/locationdetails', methods=['GET', 'POST'])
 def locationdetails():
     if 'username' in session:
@@ -73,11 +109,19 @@ def login():
         username = request.form['username']
         session['username'] = username
         password = request.form['password']
-        password_db = find_user_login(username)
-        if password_db.strip() != password.strip():
+        password_db = ""
+        try:
+            password_db = find_user_login(username)
+        except IndexError as e:    
+            error = 'Invalid User! Please Register' 
+        if password_db != "" and password_db.strip() != password.strip():
+            print("after validation", password_db)
             error = 'Invalid User Credentials! Please try Again'
+        elif password_db == "" :
+            print("check none", password_db)
             redirect(url_for("register"))
         else:
+            print(password_db)
             update_user_new_login(username)
             return redirect(url_for("profile", username=username))
         
@@ -109,9 +153,16 @@ def register():
     return render_template('register.html', msg=error)
 
 
+@app.route('/travelblog/forgotpassword')
+def reset_password():
+    locations = get_all_cities()
+    print(locations)
+    return render_template('forgotpassword.html')
+    
+    
 @app.route('/travelblog/profile/<username>')
 def profile(username):
-    locations = get_all_states()
+    locations = get_all_cities()
     print(locations)
     return render_template('profile.html', username1=username, locations=locations)
     

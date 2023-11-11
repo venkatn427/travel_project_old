@@ -48,6 +48,17 @@ CREATE TABLE worldcities (
     id INTEGER PRIMARY KEY AUTOINCREMENT
 );
 
+DROP TABLE IF EXISTS city_places;
+
+CREATE TABLE city_places (
+    city_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    city TEXT NOT NULL,
+    place TEXT NOT NULL,
+    distance FLOAT,
+    distancefromcitycenter TEXT ,
+    description TEXT
+);
+
 CREATE TRIGGER aft_insert AFTER INSERT ON users
 BEGIN
 INSERT INTO user_sessions(username,logout_time)

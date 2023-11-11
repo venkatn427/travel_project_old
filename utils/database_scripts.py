@@ -5,7 +5,15 @@ import csv
 
 global database_nm 
 database_nm = os.path.join("database", "travel_data_new.db") #check this file in sql lite studio to query data
-    
+
+   
+def insert_load_place_data(city, place, distance, distancefromcitycenter, description):
+    connection = sqlite3.connect(database_nm)
+    cur = connection.cursor()
+    cur.execute("INSERT INTO city_places (city, place, distance, distancefromcitycenter, description) VALUES (?, ?, ?, ?, ?)",
+                    (city, place, distance, distancefromcitycenter, description))
+    connection.commit()
+    return "Record Inserted Successfully" 
         
 def insert_load_world_data(city,city_ascii,lat,lng,country,iso2,iso3,admin_name,capital,population):
     connection = sqlite3.connect(database_nm)
@@ -18,7 +26,9 @@ def insert_load_world_data(city,city_ascii,lat,lng,country,iso2,iso3,admin_name,
 def create_indiancities():
     connection = sqlite3.connect(database_nm)
     cur = connection.cursor()
+    cur.execute("DROP TABLE IF EXISTS indiancities;")
     cur.execute("create table indiancities as select * from worldcities where country = 'India';")
+    connection.commit()
 
 def get_all_states():
     connection = sqlite3.connect(database_nm)
@@ -27,6 +37,21 @@ def get_all_states():
     location_all = []
     for col in cols:
         query = f"select distinct {col} from location;"
+        result = cur.execute(query).fetchall()
+        all_locations = [location[0] for location in result]
+        for location in all_locations:
+            l = {}
+            l[col] = location
+            location_all.append(l)
+    return location_all
+
+def get_all_cities():
+    connection = sqlite3.connect(database_nm)
+    cur = connection.cursor()
+    cols = ["city"]
+    location_all = []
+    for col in cols:
+        query = f"select distinct {col} from city_places;"
         result = cur.execute(query).fetchall()
         all_locations = [location[0] for location in result]
         for location in all_locations:
