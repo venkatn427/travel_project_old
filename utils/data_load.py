@@ -66,7 +66,7 @@ def get_location_data(csv_file_path):
                     city = record[0]
                     lat = str(record[2])
                     lng = str(record[3])
-                    test_api = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+"%2C"+lng+"&type="+type+"&radius=200000&key=AIzaSyD5eTxgUd8qCGHFTHzSAMs8eSC3CvbSGbA"
+                    test_api = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+"%2C"+lng+"&type="+type+"&radius=200000&key="
                     response = requests.get(test_api)
                     image_metadata = response.json()['results']
                     out_data = get_all_details(image_metadata)
